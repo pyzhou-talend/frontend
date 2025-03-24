@@ -1,8 +1,12 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
 const username = ref('');
 const password = ref('');
+const router = useRouter();
+const authStore = useAuthStore();
 
 const handleLogin = async () => {
   console.log('Login starting');
@@ -21,9 +25,12 @@ const handleLogin = async () => {
       throw new Error('Login failed');
     }
 
-    // The token will be automatically stored in cookies by the browser
-    // You can redirect or update UI state here
+    // Set authentication state
+    authStore.setAuthenticated(true, { username: username.value });
     console.log('Login successful');
+    
+    // Redirect to home page
+    router.push('/');
     
   } catch (error) {
     console.error('Login error:', error);

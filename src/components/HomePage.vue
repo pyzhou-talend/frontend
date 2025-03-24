@@ -5,28 +5,47 @@
         <h2>Your Logo</h2>
       </div>
       <div class="nav-links">
-        <button @click="navigateToLogin" class="sign-in-button">Sign In</button>
+        <template v-if="authStore.isAuthenticated.value">
+          <span class="welcome-text">Welcome, {{ authStore.userInfo.value }}</span>
+          <button @click="handleLogout" class="logout-button">Logout</button>
+        </template>
+        <template v-else>
+            <button @click="navigateToLogin" class="sign-in-button">Sign In</button>
+        </template>
       </div>
     </nav>
     
     <main class="hero-section">
-      <h1>Welcome to Your Database Platform</h1>
-      <p class="subtitle">Build faster. Build smarter. Build together.</p>
-      <div class="cta-buttons">
-        <button class="primary-button">Try Free</button>
-        <button class="secondary-button">Learn More</button>
-      </div>
+      <template v-if="authStore.isAuthenticated.value">
+        <h1>Welcome to Your Dashboard</h1>
+        <p class="subtitle">Manage your database with ease</p>
+      </template>
+      <template v-else>
+        <h1>Welcome to Your Database Platform</h1>
+        <p class="subtitle">Build faster. Build smarter. Build together.</p>
+        <div class="cta-buttons">
+          <button class="primary-button">Try Free</button>
+          <button class="secondary-button">Learn More</button>
+        </div>
+      </template>
     </main>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
 const router = useRouter();
-
+const authStore = useAuthStore();
 const navigateToLogin = () => {
+  console.log('Navigating to login');
   router.push('/login');
+};
+
+const handleLogout = () => {
+  authStore.setAuthenticated(false);
+  router.push('/');
 };
 </script>
 
@@ -109,5 +128,24 @@ h1 {
 
 .secondary-button:hover {
   background-color: rgba(66, 185, 131, 0.1);
+}
+
+.welcome-text {
+  margin-right: 1rem;
+  color: #666;
+}
+
+.logout-button {
+  padding: 0.5rem 1.5rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
 }
 </style> 
